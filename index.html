@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏆 Sports Actions & Be Going To Mini Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a0d14;
+  --ink2: #141926;
+  --ink3: #1e2538;
+  --surface: #252d45;
+  --lime: #c8f135;
+  --lime2: #a8d41a;
+  --cyan: #00d4ff;
+  --coral: #ff6b6b;
+  --gold: #ffd166;
+  --muted: #7a87a8;
+  --text: #e8edf8;
+  --text2: #b0bcd8;
+  --radius: 16px;
+  --ff: 'Lexend', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--ff);
+  background: var(--ink);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND GRID ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(200,241,53,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,241,53,.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── GLOWS ── */
+.glow-top {
+  position: fixed; top: -150px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(0,212,255,.12) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 10;
+  padding: 28px 24px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,212,255,.12);
+}
+
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: rgba(0,212,255,.1);
+  border: 1px solid rgba(0,212,255,.25);
+  padding: 5px 16px;
+  border-radius: 99px;
+  margin-bottom: 14px;
+}
+
+h1 {
+  font-size: clamp(26px, 5vw, 44px);
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+h1 span { color: var(--lime); }
+
+.sub {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  padding: 14px 20px;
+  background: var(--ink2);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  position: relative; z-index: 1;
+}
+
+.stat-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 99px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--mono);
+}
+.stat-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.d-cyan { background: var(--cyan); }
+.d-coral { background: var(--coral); }
+.d-lime { background: var(--lime); }
+
+.lives-heart { font-size: 16px; animation: pulse 1s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+/* ── MAIN QUIZ CONTAINER ── */
+.unit-section {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  position: relative; z-index: 1;
+}
+
+.q-card {
+  background: var(--ink2);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  transition: all .3s ease;
+  animation: fadeUp .3s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.q-card:hover { border-color: rgba(0,212,255,.2); box-shadow: 0 8px 32px rgba(0,0,0,.3); }
+
+.q-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px; }
+.q-num {
+  min-width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(0,212,255,.12);
+  border: 1px solid rgba(0,212,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px; font-weight: 700;
+  color: var(--cyan); flex-shrink: 0;
+}
+.q-title { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.4; padding-top: 3px; }
+.q-prompt { font-size: 14.5px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+
+/* ── STEP STYLING (FOR Q1) ── */
+.step-box {
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  animation: fadeUp .3s ease both;
+}
+.step-title {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--lime);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.step-title::before { content: '✦'; color: var(--cyan); }
+
+/* Image Grid for Step 1 */
+.img-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;
+}
+@media(max-width: 580px) { .img-grid { grid-template-columns: 1fr; } }
+
+.img-card {
+  background: var(--ink);
+  border: 2px solid rgba(255,255,255,.08);
+  border-radius: 12px; overflow: hidden;
+  cursor: pointer; transition: all .2s;
+  position: relative;
+}
+.img-card img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; transition: transform .3s;
+}
+.img-card:hover img { transform: scale(1.03); }
+.img-card:hover { border-color: rgba(0,212,255,.4); box-shadow: 0 8px 24px rgba(0,212,255,.15); }
+.img-label {
+  padding: 10px; text-align: center; font-size: 13.5px; font-weight: 600;
+  background: rgba(10,13,20,.9); backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,255,255,.05); color: var(--text);
+}
+.img-card.selected {
+  border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,.2);
+}
+.img-card.selected .img-label { background: var(--cyan); color: var(--ink); }
+
+/* Single Image Wrap */
+.single-img-wrap { max-width: 500px; margin: 0 auto 20px; background: var(--ink); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; }
+.single-img-wrap img { width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block; }
+.single-img-label { padding: 10px; text-align: center; font-size: 13.5px; font-weight: 500; color: var(--text2); background: var(--ink3); }
+
+/* Options Grid */
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width: 520px) { .options { grid-template-columns: 1fr; } }
+
+.opt-btn {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--ink3);
+  border: 1.5px solid rgba(255,255,255,.07);
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-family: var(--ff); font-size: 14.5px; color: var(--text);
+  text-align: left; transition: all .15s;
+}
+.opt-btn:hover:not(:disabled) {
+  border-color: rgba(0,212,255,.4); background: rgba(0,212,255,.06);
+}
+.opt-letter {
+  min-width: 26px; height: 26px; border-radius: 6px;
+  background: rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  color: var(--muted); flex-shrink: 0; transition: all .15s;
+}
+.opt-btn:hover:not(:disabled) .opt-letter { background: var(--cyan); color: var(--ink); }
+
+.opt-btn.correct { border-color: var(--lime); background: rgba(200,241,53,.08); }
+.opt-btn.correct .opt-letter { background: var(--lime); color: var(--ink); }
+.opt-btn.wrong { border-color: var(--coral); background: rgba(255,107,107,.08); }
+.opt-btn.wrong .opt-letter { background: var(--coral); color: #fff; }
+.opt-btn.reveal { border-color: rgba(200,241,53,.4); background: rgba(200,241,53,.04); opacity: .7; }
+.opt-btn.reveal .opt-letter { background: rgba(200,241,53,.3); color: var(--lime); }
+.opt-btn:disabled { cursor: default; }
+
+/* ── WORD SCRAMBLE (STEP 3) ── */
+.scramble-container { margin-top: 16px; }
+.sentence-drop-area {
+  min-height: 56px;
+  background: var(--ink);
+  border: 2px dashed rgba(0,212,255,.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  margin-bottom: 16px;
+}
+.sentence-drop-area.empty::before {
+  content: 'Click words below to construct the sentence...';
+  color: var(--muted); font-size: 13px; font-style: italic;
+}
+.words-pool {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+  padding: 14px; background: rgba(255,255,255,.02); border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.04);
+}
+.word-tile {
+  background: var(--surface);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  padding: 8px 16px; font-size: 15px; font-weight: 600;
+  color: var(--text); cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+.word-tile:hover:not(.disabled) {
+  background: var(--cyan); color: var(--ink); border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+.word-tile.disabled { opacity: 0.3; cursor: default; transform: none; box-shadow: none; }
+
+.btn-scramble-reset {
+  background: rgba(255,255,255,.08); color: var(--text);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 8px;
+  padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .2s;
+}
+.btn-scramble-reset:hover { background: rgba(255,107,107,.2); border-color: var(--coral); color: var(--coral); }
+
+/* ── AUDIO BOX ── */
+.audio-box {
+  background: rgba(0,212,255,.05);
+  border: 1px solid rgba(0,212,255,.2);
+  border-radius: 12px; padding: 16px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.audio-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--cyan); color: var(--ink); border: none;
+  font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,212,255,.3); transition: all .2s; flex-shrink: 0;
+}
+.audio-btn:hover { transform: scale(1.08); background: var(--lime); box-shadow: 0 6px 20px rgba(200,241,53,.4); }
+.audio-info { font-size: 13.5px; color: var(--text2); line-height: 1.5; }
+
+/* Sentence fill prompt */
+.fill-sentence {
+  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 20px;
+  padding: 16px; background: var(--ink3); border-radius: 12px; border-left: 4px solid var(--cyan);
+}
+.fill-blank {
+  display: inline-block; min-width: 100px; border-bottom: 2px solid var(--lime);
+  text-align: center; color: var(--lime); font-weight: 700; padding: 0 8px;
+}
+
+/* ── FEEDBACK & EXPLANATION ── */
+.result-badge { display: none; margin-top: 14px; font-size: 14px; font-weight: 700; padding: 10px 14px; border-radius: 8px; }
+.result-badge.ok { display: block; background: rgba(200,241,53,.1); color: var(--lime); border: 1px solid rgba(200,241,53,.2); }
+.result-badge.err { display: block; background: rgba(255,107,107,.1); color: var(--coral); border: 1px solid rgba(255,107,107,.2); }
+
+.explanation {
+  display: none; margin-top: 14px; padding: 14px 18px;
+  background: rgba(200,241,53,.06); border-left: 3px solid var(--lime);
+  border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.7; color: var(--text2);
+  animation: fadeUp .2s ease;
+}
+.explanation.show { display: block; }
+.explanation strong { color: var(--cyan); }
+
+/* ── NAVIGATION ── */
+.nav-wrap {
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 840px; margin: 0 auto 40px; padding: 0 16px;
+  position: relative; z-index: 1;
+}
+.btn-nav {
+  background: var(--ink3); color: var(--text); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; padding: 14px 28px; font-family: var(--ff); font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 8px;
+}
+.btn-nav:hover:not(:disabled) { background: rgba(0,212,255,.1); border-color: rgba(0,212,255,.3); color: var(--cyan); transform: translateY(-2px); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-action {
+  background: var(--cyan); color: var(--ink); border: none; border-radius: 12px;
+  padding: 14px 32px; font-family: var(--ff); font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all .2s; box-shadow: 0 4px 24px rgba(0,212,255,.25);
+}
+.btn-action:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,212,255,.4); background: var(--lime); }
+
+/* ── SCORE / MODAL OVERLAY ── */
+#scoreOverlay {
+  display: none; position: fixed; inset: 0; background: rgba(10,13,20,.85);
+  backdrop-filter: blur(12px); z-index: 1000; align-items: center; justify-content: center;
+  padding: 20px; animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.score-card {
+  background: var(--ink2); border: 1px solid rgba(0,212,255,.2); border-radius: 24px;
+  padding: 40px 36px; text-align: center; max-width: 500px; width: 100%;
+  box-shadow: 0 20px 80px rgba(0,0,0,.6); animation: scaleUp .3s ease;
+}
+@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.score-emoji { font-size: 72px; margin-bottom: 16px; display: block; animation: pop .5s ease; }
+@keyframes pop { from { transform: scale(0); } 70% { transform: scale(1.1); } to { transform: scale(1); } }
+.score-title { font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.score-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+.score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.score-stat { background: var(--ink3); border: 1px solid rgba(255,255,255,.06); border-radius: 14px; padding: 16px; }
+.score-stat .val { font-size: 32px; font-weight: 900; font-family: var(--mono); }
+.score-stat .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+.vl { color: var(--lime); } .vc { color: var(--coral); }
+.btn-restart { width: 100%; background: var(--cyan); color: var(--ink); border: none; border-radius: 14px; padding: 16px; font-family: var(--ff); font-size: 16px; font-weight: 800; cursor: pointer; transition: all .2s; }
+.btn-restart:hover { background: var(--lime); transform: translateY(-2px); }
+
+</style>
+</head>
+<body>
+
+<div class="glow-top"></div>
+
+<header>
+  <div class="badge">✦ Interactive Mini Game · Sports & Going To</div>
+  <h1>Sports Actions <span>Master</span></h1>
+  <p class="sub">Multi-step Interaction · Future Tense · Reflex & Vocabulary Mastery</p>
+</header>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-pill"><div class="dot d-cyan"></div>Question: <span id="statProgress">1 / 5</span></div>
+  <div class="stat-pill"><div class="dot d-coral"></div>Lives: <span id="statLives">❤️❤️❤️</span></div>
+</div>
+
+<div class="unit-section" id="quizContainer">
+  <!-- Dynamic Quiz Content -->
+</div>
+
+<div class="nav-wrap" id="navWrap">
+  <button class="btn-nav" id="prevBtn" onclick="prevQuestion()">⬅️ Previous</button>
+  <button class="btn-action" id="nextBtn" onclick="nextQuestion()">Next ➡️</button>
+</div>
+
+<!-- Score Overlay Modal -->
+<div id="scoreOverlay">
+  <div class="score-card">
+    <span class="score-emoji" id="scoreEmoji">🏆</span>
+    <div class="score-title" id="scoreTitle">Challenge Completed!</div>
+    <div class="score-sub" id="scoreSub">Excellent performance! You mastered the quiz.</div>
+    <div class="score-grid">
+      <div class="score-stat"><div class="val vl" id="scCorrect">0</div><div class="lbl">✅ Final Score</div></div>
+      <div class="score-stat"><div class="val vc" id="scWrong">0</div><div class="lbl">❌ Lives Lost</div></div>
+    </div>
+    <button class="btn-restart" onclick="restartGame()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// GAME STATE & DATA
+// ═══════════════════════════════════════════
+let currentIndex = 0;
+let lives = 3;
+let isGameOver = false;
+
+// Multi-step state for Question 1
+let q1State = {
+  selectedBranch: null, // 'climbing' | 'swimming'
+  step2Answered: false,
+  step2Passed: false,
+  selectedWords: [],
+  step3Passed: false
+};
+
+// Normal questions state (Q2, Q3, Q4, Q5)
+let normalAnswers = {}; // id -> selectedOptionIndex
+
+const QUESTIONS = [
+  // ── QUESTION 1: MULTI-STEP INTERACTIVE ── //
+  {
+    id: 1,
+    type: 'multi_step',
+    title: "Question 1: Action Discovery Challenge",
+    prompt1: "Step 1: Choose your path. Click on one of the two images below to start your challenge:",
+    images: [
+      { id: 'climbing', url: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&q=80', label: "📸 Image 1" },
+      { id: 'swimming', url: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=600&q=80', label: "📸 Image 2" }
+    ],
+    branches: {
+      climbing: {
+        step2Prompt: "Step 2: What activity is the man in your chosen image doing?",
+        options: ["Rock climbing", "Swimming", "Scuba diving", "Mountain biking"],
+        answerIdx: 0,
+        step3Prompt: "Step 3: Sentence building. Click the words below to construct a complete sentence describing his action in the near future tense:",
+        words: ["He", "is", "going", "rock", "climbing."],
+        correctSentence: "He is going rock climbing.",
+        explanation: "Native grammar: When 'be going to' is followed by 'go' (e.g. go rock climbing), native speakers often shorten it to future continuous: 'He is going rock climbing'."
+      },
+      swimming: {
+        step2Prompt: "Step 2: What activity is the man in your chosen image doing?",
+        options: ["Swimming", "Rock climbing", "Surfing", "Kayaking"],
+        answerIdx: 0,
+        step3Prompt: "Step 3: Sentence building. Click the words below to construct a complete sentence describing his action in the near future tense:",
+        words: ["He", "is", "going", "swimming."],
+        correctSentence: "He is going swimming.",
+        explanation: "Native grammar: When 'be going to' is followed by 'go' (e.g. go swimming), native speakers often shorten it to future continuous: 'He is going swimming'."
+      }
+    }
+  },
+
+  // ── QUESTION 2: SINGLE IMAGE CLIFF ── //
+  {
+    id: 2,
+    type: 'single_image',
+    title: "Question 2: Vertical Cliff",
+    prompt: "Look at the steep cliff below. Which challenging outdoor sport involves climbing vertical rock faces like this?",
+    imgUrl: 'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2017/10/15/570230/Les-Calanques-Marsei.jpg',
+    imgLabel: "",
+    options: ["Rock climbing", "Scuba diving", "Skydiving", "Bungee jumping"],
+    answerIdx: 0,
+    explanation: "The correct sport is <strong>Rock climbing</strong>. It requires immense physical strength and perseverance."
+  },
+
+  // ── QUESTION 3: SINGLE IMAGE TENT ── //
+  {
+    id: 3,
+    type: 'single_image',
+    title: "Question 3: Sleeping in Nature",
+    prompt: "Look at the image below. What shelter do campers or climbers usually set up to sleep overnight in the wild?",
+    imgUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80',
+    imgLabel: "",
+    options: ["A tent", "A hammock", "A sleeping bag", "A wooden cabin"],
+    answerIdx: 0,
+    explanation: "The correct vocabulary is <strong>A tent</strong>. Tents provide safe shelter from harsh weather and insects outdoors."
+  },
+
+  // ── QUESTION 4: AUDIO QUIZ PLACEHOLDER ── //
+  {
+    id: 4,
+    type: 'audio_quiz',
+    title: "Question 4: Listening Challenge",
+    audioNotice: "🎧 Official audio will be updated soon. (Click the speaker icon for a simulated audio alert)",
+    prompt: "Listen to the dialogue and choose the missing word:",
+    sentenceBefore: "They are going to go ",
+    sentenceAfter: " tomorrow morning.",
+    options: ["hiking", "fishing", "jogging", "skiing"],
+    answerIdx: 0,
+    explanation: "[Sample] The correct answer is <strong>hiking</strong>. Structure: 'go hiking'."
+  },
+
+  // ── QUESTION 5: AUDIO QUIZ PLACEHOLDER ── //
+  {
+    id: 5,
+    type: 'audio_quiz',
+    title: "Question 5: Listening Challenge",
+    audioNotice: "🎧 Official audio will be updated soon. (Click the speaker icon for a simulated audio alert)",
+    prompt: "Listen to the dialogue and choose the missing word:",
+    sentenceBefore: "I am going to buy a new ",
+    sentenceAfter: " for my camping trip.",
+    options: ["backpack", "helmet", "jacket", "compass"],
+    answerIdx: 0,
+    explanation: "[Sample] The correct answer is <strong>backpack</strong>."
+  }
+];
+
+// Initialize Game
+function initGame() {
+  currentIndex = 0;
+  lives = 3;
+  isGameOver = false;
+  q1State = { selectedBranch: null, step2Answered: false, step2Passed: false, selectedWords: [], step3Passed: false };
+  normalAnswers = {};
+  
+  updateLivesDisplay();
+  renderCurrentQuestion();
+}
+
+function updateLivesDisplay() {
+  let hearts = "";
+  for (let i = 0; i < lives; i++) hearts += "❤️";
+  for (let i = lives; i < 3; i++) hearts += "🖤";
+  document.getElementById('statLives').innerText = hearts;
+  document.getElementById('statProgress').innerText = `${currentIndex + 1} / ${QUESTIONS.length}`;
+}
+
+function handleWrongAnswer() {
+  lives--;
+  updateLivesDisplay();
+  if (lives <= 0) {
+    isGameOver = true;
+    setTimeout(() => { showGameOverModal(); }, 400);
+  }
+}
+
+function renderCurrentQuestion() {
+  const q = QUESTIONS[currentIndex];
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  
+  updateLivesDisplay();
+
+  // Navigation Buttons
+  document.getElementById('prevBtn').disabled = (currentIndex === 0);
+  const nextBtn = document.getElementById('nextBtn');
+  
+  if (currentIndex === QUESTIONS.length - 1) {
+    nextBtn.innerText = "🎯 Finish Game";
+  } else {
+    nextBtn.innerText = "Next ➡️";
+  }
+
+  // Lock next button if question is incomplete
+  if (q.type === 'multi_step') {
+    nextBtn.disabled = !q1State.step3Passed;
+  } else {
+    nextBtn.disabled = (normalAnswers[q.id] === undefined);
+  }
+
+  // ── RENDER Q1: MULTI STEP ── //
+  if (q.type === 'multi_step') {
+    const card = document.createElement('div'); card.className = 'q-card';
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">1</div>
+        <div class="q-title">${q.title}</div>
+      </div>
+      <div class="step-box" id="step1Box">
+        <div class="step-title">Step 1: Select Image</div>
+        <div class="q-prompt">${q.prompt1}</div>
+        <div class="img-grid">
+          ${q.images.map(img => `
+            <div class="img-card ${q1State.selectedBranch === img.id ? 'selected' : ''}" onclick="selectQ1Branch('${img.id}')" id="imgCard-${img.id}">
+              <img src="${img.url}" alt="${img.label}" referrerpolicy="no-referrer">
+              <div class="img-label">${img.label}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div id="step2Container"></div>
+      <div id="step3Container"></div>
+    `;
+    container.appendChild(card);
+    
+    // Resume branch rendering if selected
+    if (q1State.selectedBranch) {
+      renderQ1Step2();
+      if (q1State.step2Passed) renderQ1Step3();
+    }
+  } 
+  
+  // ── RENDER Q2 & Q3: SINGLE IMAGE ── //
+  else if (q.type === 'single_image') {
+    const card = document.createElement('div'); card.className = 'q-card';
+    const letters = ['A','B','C','D'];
+    const isAnswered = normalAnswers[q.id] !== undefined;
+    const userAns = normalAnswers[q.id];
+    
+    let optHTML = q.options.map((opt, idx) => {
+      let btnClass = "";
+      if (isAnswered) {
+        if (idx === q.answerIdx) btnClass = "correct";
+        else if (idx === userAns) btnClass = "wrong";
+      }
+      return `
+        <button class="opt-btn ${btnClass}" onclick="selectNormalOption(${q.id}, ${idx})" ${isAnswered ? 'disabled' : ''}>
+          <div class="opt-letter">${letters[idx]}</div>
+          ${opt}
+        </button>
+      `;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">${q.id}</div>
+        <div class="q-title">${q.title}</div>
+      </div>
+      <div class="q-prompt">${q.prompt}</div>
+      <div class="single-img-wrap">
+        <img src="${q.imgUrl}" alt="Illustration" referrerpolicy="no-referrer">
+        ${q.imgLabel ? `<div class="single-img-label">${q.imgLabel}</div>` : ''}
+      </div>
+      <div class="options">${optHTML}</div>
+      <div class="result-badge" id="badge-${q.id}"></div>
+      <div class="explanation ${isAnswered ? 'show' : ''}">💡 <strong>Explanation:</strong> ${q.explanation}</div>
+    `;
+    container.appendChild(card);
+    
+    if (isAnswered) {
+      const badge = card.querySelector(`#badge-${q.id}`);
+      if (userAns === q.answerIdx) { badge.className = 'result-badge ok'; badge.innerText = "✅ Correct!"; }
+      else { badge.className = 'result-badge err'; badge.innerText = "❌ Incorrect!"; }
+    }
+  }
+  
+  // ── RENDER Q4 & Q5: AUDIO QUIZ ── //
+  else if (q.type === 'audio_quiz') {
+    const card = document.createElement('div'); card.className = 'q-card';
+    const letters = ['A','B','C','D'];
+    const isAnswered = normalAnswers[q.id] !== undefined;
+    const userAns = normalAnswers[q.id];
+    
+    let optHTML = q.options.map((opt, idx) => {
+      let btnClass = "";
+      if (isAnswered) {
+        if (idx === q.answerIdx) btnClass = "correct";
+        else if (idx === userAns) btnClass = "wrong";
+      }
+      return `
+        <button class="opt-btn ${btnClass}" onclick="selectNormalOption(${q.id}, ${idx})" ${isAnswered ? 'disabled' : ''}>
+          <div class="opt-letter">${letters[idx]}</div>
+          ${opt}
+        </button>
+      `;
+    }).join('');
+
+    // Blank text
+    let blankText = "________";
+    if (isAnswered) {
+      blankText = q.options[isAnswered ? userAns : q.answerIdx];
+    }
+
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">${q.id}</div>
+        <div class="q-title">${q.title}</div>
+      </div>
+      <div class="audio-box">
+        <button class="audio-btn" onclick="playMockAudio(${q.id})">🔊</button>
+        <div class="audio-info">${q.audioNotice}</div>
+      </div>
+      <div class="q-prompt">${q.prompt}</div>
+      <div class="fill-sentence">
+        ${q.sentenceBefore}<span class="fill-blank" id="blank-${q.id}">${blankText}</span>${q.sentenceAfter}
+      </div>
+      <div class="options">${optHTML}</div>
+      <div class="result-badge" id="badge-${q.id}"></div>
+      <div class="explanation ${isAnswered ? 'show' : ''}">💡 <strong>Explanation:</strong> ${q.explanation}</div>
+    `;
+    container.appendChild(card);
+    
+    if (isAnswered) {
+      const badge = card.querySelector(`#badge-${q.id}`);
+      if (userAns === q.answerIdx) { badge.className = 'result-badge ok'; badge.innerText = "✅ Correct!"; }
+      else { badge.className = 'result-badge err'; badge.innerText = "❌ Incorrect!"; }
+    }
+  }
+}
+
+// ── Q1 LOGIC ── //
+function selectQ1Branch(branchId) {
+  if (q1State.step3Passed) return; // Locked once passed
+  
+  q1State.selectedBranch = branchId;
+  q1State.step2Answered = false; q1State.step2Passed = false;
+  q1State.selectedWords = []; q1State.step3Passed = false;
+  
+  // Highlight
+  document.querySelectorAll('.img-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`imgCard-${branchId}`).classList.add('selected');
+  
+  renderQ1Step2();
+  document.getElementById('step3Container').innerHTML = ''; // Reset step 3
+  document.getElementById('nextBtn').disabled = true;
+  
+  // Smooth scroll
+  setTimeout(() => { document.getElementById('step2Box').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+}
+
+function renderQ1Step2() {
+  const branchData = QUESTIONS[0].branches[q1State.selectedBranch];
+  const container = document.getElementById('step2Container');
+  const letters = ['A','B','C','D'];
+  
+  let optHTML = branchData.options.map((opt, idx) => {
+    let btnClass = "";
+    if (q1State.step2Answered) {
+      if (idx === branchData.answerIdx) btnClass = "correct";
+      else btnClass = "wrong";
+    }
+    return `
+      <button class="opt-btn ${btnClass}" onclick="selectQ1Step2Option(${idx})" ${q1State.step2Passed ? 'disabled' : ''}>
+        <div class="opt-letter">${letters[idx]}</div>
+        ${opt}
+      </button>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="step-box" id="step2Box">
+      <div class="step-title">Step 2: Guess Activity</div>
+      <div class="q-prompt">${branchData.step2Prompt}</div>
+      <div class="options">${optHTML}</div>
+      <div class="result-badge ${q1State.step2Answered ? (q1State.step2Passed ? 'ok' : 'err') : ''}" id="step2Badge">
+        ${q1State.step2Answered ? (q1State.step2Passed ? '✅ Correct!' : '❌ Incorrect, try again!') : ''}
+      </div>
+    </div>
+  `;
+}
+
+function selectQ1Step2Option(selectedIdx) {
+  if (q1State.step2Passed) return;
+  
+  const branchData = QUESTIONS[0].branches[q1State.selectedBranch];
+  q1State.step2Answered = true;
+  
+  if (selectedIdx === branchData.answerIdx) {
+    q1State.step2Passed = true;
+    renderQ1Step2(); // Refresh UI to show correct state
+    
+    // Initialize scramble words
+    initQ1ScrambleWords();
+    renderQ1Step3();
+    setTimeout(() => { document.getElementById('step3Box').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+  } else {
+    handleWrongAnswer();
+    renderQ1Step2();
+  }
+}
+
+// Q1 Step 3 Scramble
+let scramblePool = [];
+function initQ1ScrambleWords() {
+  const branchData = QUESTIONS[0].branches[q1State.selectedBranch];
+  scramblePool = [...branchData.words].sort(() => Math.random() - 0.5);
+  q1State.selectedWords = [];
+}
+
+function renderQ1Step3() {
+  const branchData = QUESTIONS[0].branches[q1State.selectedBranch];
+  const container = document.getElementById('step3Container');
+  
+  let dropHTML = q1State.selectedWords.map((word, idx) => `
+    <div class="word-tile" onclick="removeQ1Word(${idx})">${word}</div>
+  `).join('');
+
+  let poolHTML = scramblePool.map((word, idx) => {
+    const isUsed = q1State.selectedWords.includes(word);
+    return `
+      <div class="word-tile ${isUsed ? 'disabled' : ''}" onclick="addQ1Word('${word}')">${word}</div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="step-box" id="step3Box">
+      <div class="step-title">Step 3: Complete Future Tense</div>
+      <div class="q-prompt">${branchData.step3Prompt}</div>
+      <div class="scramble-container">
+        <div class="sentence-drop-area ${q1State.selectedWords.length === 0 ? 'empty' : ''}">${dropHTML}</div>
+        <div class="words-pool">${poolHTML}</div>
+        <button class="btn-scramble-reset" onclick="resetQ1Scramble()" ${q1State.step3Passed ? 'style="display:none;"' : ''}>🔄 Reset Words</button>
+      </div>
+      <div class="result-badge ${q1State.step3Passed ? 'ok' : ''}" id="step3Badge" style="${q1State.step3Passed ? 'display:block;' : ''}">
+        ${q1State.step3Passed ? '🎉 Excellent! You built the correct sentence.' : ''}
+      </div>
+      <div class="explanation ${q1State.step3Passed ? 'show' : ''}">💡 <strong>Explanation:</strong> ${branchData.explanation}</div>
+    </div>
+  `;
+
+  document.getElementById('nextBtn').disabled = !q1State.step3Passed;
+}
+
+function addQ1Word(word) {
+  if (q1State.step3Passed) return;
+  if (q1State.selectedWords.includes(word)) return; // Already used
+  
+  q1State.selectedWords.push(word);
+  renderQ1Step3();
+  
+  // Check completion
+  const branchData = QUESTIONS[0].branches[q1State.selectedBranch];
+  if (q1State.selectedWords.length === branchData.words.length) {
+    const userSentence = q1State.selectedWords.join(' ');
+    if (userSentence === branchData.correctSentence) {
+      q1State.step3Passed = true;
+      renderQ1Step3();
+      // Auto advance
+      if (lives > 0) {
+        setTimeout(() => { nextQuestion(); }, 1600);
+      }
+    } else {
+      handleWrongAnswer();
+      const badge = document.getElementById('step3Badge');
+      badge.className = "result-badge err"; badge.style.display = "block";
+      badge.innerText = "❌ Incorrect sentence. Words reset, please try again!";
+      setTimeout(() => { resetQ1Scramble(); }, 1800);
+    }
+  }
+}
+
+function removeQ1Word(idx) {
+  if (q1State.step3Passed) return;
+  q1State.selectedWords.splice(idx, 1);
+  renderQ1Step3();
+}
+
+function resetQ1Scramble() {
+  if (q1State.step3Passed) return;
+  q1State.selectedWords = [];
+  renderQ1Step3();
+}
+
+// ── NORMAL OPTIONS (Q2, Q3, Q4, Q5) ── //
+function selectNormalOption(qId, optIdx) {
+  if (normalAnswers[qId] !== undefined) return; // Already answered
+  
+  const q = QUESTIONS.find(item => item.id === qId);
+  normalAnswers[qId] = optIdx;
+  
+  if (optIdx !== q.answerIdx) {
+    handleWrongAnswer();
+  }
+  
+  renderCurrentQuestion();
+
+  // Auto advance
+  if (lives > 0 && currentIndex < QUESTIONS.length - 1) {
+    setTimeout(() => {
+      if (QUESTIONS[currentIndex].id === qId) {
+        nextQuestion();
+      }
+    }, 1500);
+  }
+}
+
+// ── AUDIO SIMULATION ── //
+function playMockAudio(qId) {
+  const q = QUESTIONS.find(item => item.id === qId);
+  alert(`[Audio Simulation] Playing dialogue: "${q.sentenceBefore} ${q.options[q.answerIdx]} ${q.sentenceAfter}"`);
+}
+
+// ── NAVIGATION & ENDGAME ── //
+function nextQuestion() {
+  if (isGameOver) return;
+  if (currentIndex < QUESTIONS.length - 1) {
+    currentIndex++;
+    renderCurrentQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    // Finish Game
+    showWinModal();
+  }
+}
+
+function prevQuestion() {
+  if (isGameOver) return;
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderCurrentQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function showWinModal() {
+  document.getElementById('scoreEmoji').innerText = "🏆";
+  document.getElementById('scoreTitle').innerText = "Challenge Completed!";
+  document.getElementById('scoreSub').innerText = "Excellent performance! You mastered the quiz.";
+  document.getElementById('scCorrect').innerText = `${QUESTIONS.length} / ${QUESTIONS.length}`;
+  document.getElementById('scWrong').innerText = `${3 - lives}`;
+  document.getElementById('scoreOverlay').style.display = "flex";
+}
+
+function showGameOverModal() {
+  document.getElementById('scoreEmoji').innerText = "💥";
+  document.getElementById('scoreTitle').innerText = "Game Over!";
+  document.getElementById('scoreSub').innerText = "You have lost all 3 lives. Don't worry, try again!";
+  document.getElementById('scCorrect').innerText = `${currentIndex} / ${QUESTIONS.length}`;
+  document.getElementById('scWrong').innerText = "3";
+  document.getElementById('scoreOverlay').style.display = "flex";
+}
+
+function restartGame() {
+  document.getElementById('scoreOverlay').style.display = "none";
+  initGame();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Load
+window.onload = initGame;
+</script>
+</body>
+</html>
