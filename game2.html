@@ -1027,7 +1027,8 @@ function playMockAudio(qId) {
     audio.play();
     return;
   }
-  alert(`[Audio Simulation] Missing audio for Q${qId}.`);
+ const realAudio = new Audio(q.audioUrl);
+realAudio.play();
 }
 
 
